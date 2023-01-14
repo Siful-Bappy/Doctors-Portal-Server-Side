@@ -32,6 +32,7 @@ async function run() {
       res.send(services);
     });
 
+    // not proper way to query but better to use aggregate lookup, pipeline, match, group
     app.get("/available", async(req, res) => {
       const date = req.query.date || "Jan 14, 2023";
       // step 1: get all services
@@ -44,12 +45,18 @@ async function run() {
         const serviceBookings = bookings.filter(b => b.treatment === service.name);
         const booked = serviceBookings.map(s => s.slot)
         const available = service.slots.filter(s => !booked.includes(s))
-        service.available = available;
-        console.log(service);
+        service.slots = available;
         // service.booked = booked;
         // console.log(service);
       })
       res.send(services);
+    })
+
+    app.get("/booking", async(req, res) => {
+      const patient = req.query.patient;
+      query = {patient: patient}
+      const bookings = await bookingCollection.find(query).toArray();
+      res.send(bookings);
     })
 
     app.post('/booking', async (req, res) => {
