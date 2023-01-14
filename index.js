@@ -37,3 +37,12 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Doctors listening on port ${port}`)
 })
+
+/*
+ * Api naming convention
+* app.get("/booking") // get all booking collection. or get more than one or by filter
+* app.get("/booking:id") // get spcific id
+* app.post("/booking") // add a new booking
+* app.patch("/booking:id") // update a booking
+* app.delete("/booking:id") // delete a booking
+ */
