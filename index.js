@@ -92,9 +92,14 @@ async function run() {
       const patient = req.query.patient;
       // const authorization = req.headers.authorization;
       // console.log(authorization);
-      query = {patient: patient}
-      const bookings = await bookingCollection.find(query).toArray();
-      res.send(bookings);
+      const decoadedEmail = req.decoded.email;
+      if(patient === decoadedEmail) {
+        query = {patient: patient}
+        const bookings = await bookingCollection.find(query).toArray();
+        res.send(bookings);
+      } else {
+        return res.status(403).send({message: "forbidden access"})
+      }
     })
 
     app.post('/booking', async (req, res) => {
