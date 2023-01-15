@@ -38,7 +38,6 @@ async function run() {
       };
       const result = await userCollection.updateOne(filter, updateDoc, options)
       res.send(result)
-  
     })
 
     app.get("/service", async (req, res) => {
