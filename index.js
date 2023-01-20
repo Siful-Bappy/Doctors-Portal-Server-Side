@@ -67,13 +67,21 @@ async function run() {
     })
 
     app.put("/user/admin/:email", varifyJWT, async(req, res) => {
-        const email = req.params.email;
-        const filter = {email: email};
+      const email = req.params.email;
+        const filter = { email: email };
         const updateDoc = {
-          $set: {role: "admin"},
+          $set: { role: 'admin' },
         };
-        const result = await userCollection.updateOne(filter, updateDoc)
+        const result = await userCollection.updateOne(filter, updateDoc);
         res.send(result);
+
+        // const email = req.params.email;
+        // const filter = {email: email};
+        // const updateDoc = {
+        //   $set: { role: 'admin' },
+        // };
+        // const result = await userCollection.updateOne(filter, updateDoc)
+        // res.send(result);
       })
 
     app.get("/service", async (req, res) => {
