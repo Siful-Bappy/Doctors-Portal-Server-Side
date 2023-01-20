@@ -46,7 +46,7 @@ async function run() {
       .db("doctors-portal")
       .collection("users");
 
-    app.get("/user", async(req, res) => {
+    app.get("/user", varifyJWT, async(req, res) => {
       const users = await userCollection.find().toArray();
       res.send(users);
     })
@@ -65,6 +65,16 @@ async function run() {
       const token = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
       res.send({result, token: token});
     })
+
+    app.put("/user/admin/:email", varifyJWT, async(req, res) => {
+        const email = req.params.email;
+        const filter = {email: email};
+        const updateDoc = {
+          $set: {role: "admin"},
+        };
+        const result = await userCollection.updateOne(filter, updateDoc)
+        res.send(result);
+      })
 
     app.get("/service", async (req, res) => {
       const query = {};
