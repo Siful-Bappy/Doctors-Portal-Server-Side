@@ -33,6 +33,16 @@ const varifyJWT = (req, res, next) => {
   });
 }
 
+const varifyAdmin = async(req, res, next) => {
+  const requester = req.decoded.email;
+  const requesterAcconunt = await userCollection.findOne({email: requester});
+  if(requesterAcconunt.role === 'admin') {
+    next()
+  } else {
+    req.status(403).send({message: "forbidden"})
+  }
+}
+
 async function run() {
   try {
     await client.connect();
@@ -45,6 +55,9 @@ async function run() {
     const userCollection = client
       .db("doctors-portal")
       .collection("users");
+    const doctorCollection = client
+      .db("doctors-portal")
+      .collection("doctors");
 
     app.get("/user", varifyJWT, async(req, res) => {
       const users = await userCollection.find().toArray();
@@ -131,6 +144,8 @@ async function run() {
       }
     })
 
+    
+
     app.post('/booking', async (req, res) => {
       const booking = req.body;
       const query = { treatment: booking.treatment, date: booking.date, patient: booking.patient }
@@ -141,6 +156,18 @@ async function run() {
       const result = await bookingCollection.insertOne(booking);
       return res.send({ success: true, result });
     })
+
+    app.post("/doctor", async(req, res) => {
+      const doctor = req.body;
+      const result = await doctorCollection.insertOne(doctor);
+      res.send(result)
+    })
+    app.get("/doctor", async(req, res) => {
+      const doctors = await doctorCollection.find().toArray();
+      res.send(doctors)
+    })
+
+
   } finally {
   }
 }
